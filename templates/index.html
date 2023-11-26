@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+  Main page
+{% endblock %}
+
+{% block body %}
+  <form method="post" action="#" class="form_settings">
+    <p><span>Username</span><input class="contact" type="text" name="username" value="" /></p>
+    <p style="padding-top: 15px"><span>&nbsp;</span><input class="submit" type="submit" name="entry_submitted" value="OK" /></p>
+  </form>
+
+  <div>{{ info }}</div>
+{% endblock %}
