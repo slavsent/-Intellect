@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center pt-3">
+  <div class="col-md-8 col-lg-6">
+    <h2>Пометить запись о студенте удалённой?</h2>
+    <p>
+      Поставить отметку удаления для записи студента:<br>
+      Firstname: "{{ object.firstname }}" Surname: {{ object.surname }}
+    </p>
+    <p>
+    <div class="row">
+      <div class="col-6">
+        <form action="{% url 'mainapp:students_delete' pk=object.pk %}"
+          method="post">
+          {% csrf_token %}
+          <button class="btn btn-danger btn-block"
+            type="submit">Подтвердить</button>
+        </form>
+      </div>
+      <div class="col-6">
+        <a class="btn btn-primary btn-block" href="{% url 'mainapp:students' %}"
+          role="button">Отмена</a>
+      </div>
+    </div>
+    </p>
+  </div>
+</div>
+{% endblock content %}

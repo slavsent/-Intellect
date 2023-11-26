@@ -14,4 +14,7 @@ urlpatterns = [
     path("doc_site/", views.DocSitePageView.as_view(), name="doc_site"),
     path("log_view/", views.LogView.as_view(), name="log_view"),
     path("log_download/", views.LogDownloadView.as_view(), name="log_download"),
+    path("quotes/", views.QuotesListView.as_view(), name="quotes"),
+    path("quotes/<int:pk>/update", views.QuotesUpdateView.as_view(), name="quotes_update"),
+    path("quotes/<int:pk>/delete", views.QuotesDeleteView.as_view(), name="quotes_delete"),
 ]

@@ -1,4 +1,5 @@
 import logging
+import datetime
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
@@ -7,6 +8,8 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView, View
+from dateutil import parser
+from django.utils.timezone import make_aware
 
 from mainapp import forms as mainapp_forms
 from mainapp import models as mainapp_models
@@ -28,7 +31,7 @@ class NewsPageView(TemplateView):
         context["news_title"] = "Громкий новостной заголовок"
         context["news_preview"] = "Предварительное описание, которое заинтересует каждого"
         context["range"] = range(5)
-        context["datetime_obj"] = datetime.now()
+        context["datetime_obj"] = datetime.datetime.now()
         return context
 
 
@@ -72,3 +75,45 @@ class LogDownloadView(UserPassesTestMixin, View):
 
     def get(self, *args, **kwargs):
         return FileResponse(open(settings.LOG_FILE, "rb"))
+
+
+class QuotesListView(ListView):
+    model = mainapp_models.Quotes
+    paginate_by = 5
+    logger.debug(f"A list of news is being created")
+
+    def get_queryset(self):
+        from_date = self.request.GET.get('dateFrom')
+        to_date = self.request.GET.get('dateTo')
+        logger.debug(f"Selecting news by filter")
+        if from_date and to_date:
+            logger.debug(f"Selecting news by filter, if there are dates from and to")
+            return super().get_queryset().filter(
+                created__range=(make_aware(parser.parse(from_date)), make_aware(parser.parse(to_date + ' 23:59:59'))),
+                deleted=False)
+        elif from_date:
+            logger.debug(f"Selecting news by filter, if there is only a date from")
+            return super().get_queryset().filter(
+                created__gte=(parser.parse(from_date)), deleted=False)
+        elif to_date:
+            logger.debug(f"Selecting news by filter, if there is only a date before")
+            return super().get_queryset().filter(created__lte=make_aware(parser.parse(to_date + ' 23:59:59')),
+                                                 deleted=False)
+        else:
+            logger.debug(f"News Selection full list")
+            return super().get_queryset().filter(deleted=False)
+
+
+class QuotesUpdateView(PermissionRequiredMixin, UpdateView):
+    model = mainapp_models.Quotes
+    fields = ['title', 'title_en', 'preambule', 'preambule_en', 'body', 'body_en']
+    success_url = reverse_lazy("mainapp:quotes")
+    permission_required = ("mainapp.change_quotes",)
+    logger.debug(f"Changing the news")
+
+
+class QuotesDeleteView(PermissionRequiredMixin, DeleteView):
+    model = mainapp_models.Quotes
+    success_url = reverse_lazy("mainapp:quotes")
+    permission_required = ("mainapp.delete_quotes",)
+    logger.debug(f"Deleting news")
