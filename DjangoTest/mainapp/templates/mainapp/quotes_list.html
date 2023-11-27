@@ -20,11 +20,12 @@
     {% for item in object_list %}
     <div class="card my-2">
       <div class="card-body">
-        <h5 class="card-title">Firstname: {{ item.firstname }} Surname: {{ item.surname }} </h5>
-        <p class="card-text"></p>
+        <h5 class="card-title">Symbol: {{ item.symbol }} Date and time: {{ item.time_quote }}</h5>
+        <p class="card-text">Open: {{ item.open }} High: {{ item.high }} Low: {{ item.low }}
+          Close: {{ item.close }} Volume: {{ item.volume }}</p>
         <div class="row">
           <div class="col">
-            <a href="{% url 'mainapp:students_detail' pk=item.pk %}"
+            <a href="#"
               class="card-link">Подробнее</a>
           </div>
           {% if perms.mainapp.change_student %}

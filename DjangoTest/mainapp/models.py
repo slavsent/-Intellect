@@ -4,7 +4,7 @@ from django.db import models
 class Quotes(models.Model):
     simbol = models.CharField(max_length=256, verbose_name="Simbol")
     updated = models.DateTimeField(auto_now=True, verbose_name="Edited")
-    time_quote = models.DateTimeField(auto_now_add=True, verbose_name="Time")
+    time_quote = models.DateTimeField(verbose_name="Time")
     open = models.FloatField(verbose_name="Open")
     high = models.FloatField(verbose_name="High")
     low = models.FloatField(verbose_name="Low")

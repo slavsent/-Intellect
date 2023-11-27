@@ -77,43 +77,45 @@ class LogDownloadView(UserPassesTestMixin, View):
         return FileResponse(open(settings.LOG_FILE, "rb"))
 
 
-class QuotesListView(ListView):
+class QuotesListView(LoginRequiredMixin, ListView):
     model = mainapp_models.Quotes
+    login_url = 'authapp:login'
+    redirect_field_name = 'redirect_to'
     paginate_by = 5
-    logger.debug(f"A list of news is being created")
+    logger.debug(f"A list of quotes is being created")
 
     def get_queryset(self):
         from_date = self.request.GET.get('dateFrom')
         to_date = self.request.GET.get('dateTo')
-        logger.debug(f"Selecting news by filter")
+        logger.debug(f"Selecting quotes by filter")
         if from_date and to_date:
-            logger.debug(f"Selecting news by filter, if there are dates from and to")
+            logger.debug(f"Selecting quotes by filter, if there are dates from and to")
             return super().get_queryset().filter(
-                created__range=(make_aware(parser.parse(from_date)), make_aware(parser.parse(to_date + ' 23:59:59'))),
+                time_quote__range=(make_aware(parser.parse(from_date)), make_aware(parser.parse(to_date + ' 23:59:59'))),
                 deleted=False)
         elif from_date:
-            logger.debug(f"Selecting news by filter, if there is only a date from")
+            logger.debug(f"Selecting quotes by filter, if there is only a date from")
             return super().get_queryset().filter(
-                created__gte=(parser.parse(from_date)), deleted=False)
+                time_quote__gte=(parser.parse(from_date)), deleted=False)
         elif to_date:
-            logger.debug(f"Selecting news by filter, if there is only a date before")
-            return super().get_queryset().filter(created__lte=make_aware(parser.parse(to_date + ' 23:59:59')),
+            logger.debug(f"Selecting quotes by filter, if there is only a date before")
+            return super().get_queryset().filter(time_quote__lte=make_aware(parser.parse(to_date + ' 23:59:59')),
                                                  deleted=False)
         else:
-            logger.debug(f"News Selection full list")
+            logger.debug(f"Quotes Selection full list")
             return super().get_queryset().filter(deleted=False)
 
 
 class QuotesUpdateView(PermissionRequiredMixin, UpdateView):
     model = mainapp_models.Quotes
-    fields = ['title', 'title_en', 'preambule', 'preambule_en', 'body', 'body_en']
+    fields = ['symbol', 'time_quote', 'open', 'high', 'low', 'close', 'volume']
     success_url = reverse_lazy("mainapp:quotes")
     permission_required = ("mainapp.change_quotes",)
-    logger.debug(f"Changing the news")
+    logger.debug(f"Changing the quotes")
 
 
 class QuotesDeleteView(PermissionRequiredMixin, DeleteView):
     model = mainapp_models.Quotes
     success_url = reverse_lazy("mainapp:quotes")
     permission_required = ("mainapp.delete_quotes",)
-    logger.debug(f"Deleting news")
+    logger.debug(f"Deleting quotes")

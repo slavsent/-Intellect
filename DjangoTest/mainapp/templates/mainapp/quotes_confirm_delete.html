@@ -3,15 +3,15 @@
 {% block content %}
 <div class="row justify-content-center pt-3">
   <div class="col-md-8 col-lg-6">
-    <h2>Пометить запись о студенте удалённой?</h2>
+    <h2>Пометить запись удалённой?</h2>
     <p>
-      Поставить отметку удаления для записи студента:<br>
-      Firstname: "{{ object.firstname }}" Surname: {{ object.surname }}
+      Поставить отметку удаления для записи:<br>
+      Symbol: "{{ object.symbol }}" Date and time: {{ object.time_quote }}
     </p>
     <p>
     <div class="row">
       <div class="col-6">
-        <form action="{% url 'mainapp:students_delete' pk=object.pk %}"
+        <form action="{% url 'mainapp:quotes_delete' pk=object.pk %}"
           method="post">
           {% csrf_token %}
           <button class="btn btn-danger btn-block"
@@ -19,7 +19,7 @@
         </form>
       </div>
       <div class="col-6">
-        <a class="btn btn-primary btn-block" href="{% url 'mainapp:students' %}"
+        <a class="btn btn-primary btn-block" href="{% url 'mainapp:quotes' %}"
           role="button">Отмена</a>
       </div>
     </div>
