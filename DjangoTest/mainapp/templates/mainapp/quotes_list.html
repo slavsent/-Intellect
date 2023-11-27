@@ -30,14 +30,14 @@
           </div>
           {% if perms.mainapp.change_student %}
           <div class="col-1 text-center">
-            <a href="{% url 'mainapp:students_update' pk=item.pk %}">
+            <a href="{% url 'mainapp:quotes_update' pk=item.pk %}">
               <i class="far fa-edit"></i>
             </a>
           </div>
           {% endif %}
           {% if perms.mainapp.delete_student %}
           <div class="col-1 text-center">
-            <a href="{% url 'mainapp:students_delete' pk=item.pk %}">
+            <a href="{% url 'mainapp:quotes_delete' pk=item.pk %}">
               <i class="far fa-trash-alt"></i>
             </a>
           </div>

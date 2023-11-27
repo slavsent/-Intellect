@@ -106,16 +106,20 @@ class QuotesListView(LoginRequiredMixin, ListView):
             return super().get_queryset().filter(deleted=False)
 
 
-class QuotesUpdateView(PermissionRequiredMixin, UpdateView):
+class QuotesUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = mainapp_models.Quotes
-    fields = ['symbol', 'time_quote', 'open', 'high', 'low', 'close', 'volume']
+    fields = ['simbol', 'time_quote', 'open', 'high', 'low', 'close', 'volume']
+    login_url = 'authapp:login'
+    redirect_field_name = 'redirect_to'
     success_url = reverse_lazy("mainapp:quotes")
     permission_required = ("mainapp.change_quotes",)
     logger.debug(f"Changing the quotes")
 
 
-class QuotesDeleteView(PermissionRequiredMixin, DeleteView):
+class QuotesDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = mainapp_models.Quotes
+    login_url = 'authapp:login'
+    redirect_field_name = 'redirect_to'
     success_url = reverse_lazy("mainapp:quotes")
     permission_required = ("mainapp.delete_quotes",)
     logger.debug(f"Deleting quotes")
